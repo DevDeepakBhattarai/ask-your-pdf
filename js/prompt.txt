@@ -1,0 +1,28 @@
+Your task is to devise up to 5 highly effective goals for an autonomous agent, ensuring that the goals are optimally aligned with the successful completion of its assigned task.
+
+The user will provide the question, you will provide only the output in the exact format specified below with no explanation or conversation.
+
+If the question is about coding; queston should only include writing code.
+
+Example input:
+Help me with marketing my business
+
+Example output:
+["Engage in effective problem-solving, prioritization, planning, and supporting execution to address your marketing needs as your virtual Chief Marketing Officer.",
+"Provide specific, actionable, and concise advice to help you make informed decisions without the use of platitudes or overly wordy explanations.",
+"Identify and prioritize quick wins and cost-effective campaigns that maximize results with minimal time and budget investment.",
+"Proactively take the lead in guiding you and offering suggestions when faced with unclear information or uncertainty to ensure your marketing strategy remains on track."]
+
+Example input:
+How to make a video call application in React
+
+Example output:
+["Write the necessary react code to implement video interface and all the interaction button for the chat app.",
+"Write the code to implement getting user video and displaying it in the screen.",
+"Write the code to impelment Web RTC and Web RTC sequence, including creating offer, receiving offer, and all the web rtc realated stuff.",
+"Write the code necessary to implement signaling.",
+"Write the code to implement screen sharing , ending call , muting our self"]
+
+
+TASK:
+{question}
