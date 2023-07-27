@@ -1,65 +1,59 @@
-import { appendFileSync, readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import ps from "prompt-sync";
 import { askGPT } from "./src/askGPT";
 import { initializeApp } from "./src/initializeApp";
-import { formatForMarkDown } from "./utils/formatForMd";
 import { promptTemplate } from "./utils/promptTemplate";
-import { sleep } from "./utils/sleep";
-import { loading } from "./utils/loading";
-const prompt = ps();
+import express from "express";
+import { Page } from "puppeteer";
+import { newGPTPage } from "./src/newGPTPage";
+import { z } from "zod";
+import { sys } from "typescript";
 
-async function run() {
-  const page = await initializeApp();
-  let userPrompt;
-  while (true) {
-    userPrompt = prompt("Enter the prompt for auto gpt : ");
-    if (userPrompt == ":q") break;
-    const replacements = {
-      question: userPrompt,
-    };
-    const isLoading = loading();
-    const templatePrompt = readFileSync("prompt.txt").toString();
-    let finalPrompt = promptTemplate(templatePrompt, replacements);
-    const questionString = await askGPT(page, finalPrompt);
+const inputSchema = z.object({
+  system: z.string(),
+  prompt: z.string(),
+  context: z.string(),
+});
+const app = express();
+const port = 3000;
+app.use(express.json());
+let page: Page | undefined;
 
-    process.stdout.clearLine(0);
-    console.log("\n GPT generated all the question! \n");
-    writeFileSync("questions.txt", questionString);
+app.post("/answer", async (req, res) => {
+  const data = req.body;
+  try {
+    const { prompt: userPrompt, system, context } = inputSchema.parse(data);
 
-    let questions;
+    if (!page) {
+      page = await initializeApp(); // Assuming initializeApp is defined in your GPT module
+    }
+    if (page) {
+      await newGPTPage(page);
+    }
 
     try {
-      questions = JSON.parse(questionString.trim()) as Array<string>;
-    } catch (e) {
-      process.stdout.clearLine(0);
-      console.log("GPT didn't give the correct answer");
-      break;
+      const replacements = {
+        question: userPrompt,
+        system: system,
+        context: context,
+      };
+
+      const templatePrompt = readFileSync("prompt.txt").toString(); // Replace with the correct path
+      const finalPrompt = promptTemplate(templatePrompt, replacements); // Assuming promptTemplate is defined in your GPT module
+      const answer = await askGPT(page, finalPrompt); // Assuming askGPT is defined in your GPT module
+      res.json({ answer });
+    } catch (error) {
+      console.error("Error generating GPT output:", error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while generating the answer." });
     }
-
-    await askGPT(
-      page,
-      "You can now forget all the previous instruction and answer normally"
-    );
-
-    process.stdout.clearLine(0);
-    console.log("\n GPT reset \n");
-
-    for (const question of questions) {
-      const answer = await askGPT(page, question);
-      const formattedAnswer = formatForMarkDown(answer);
-      const answerToPutInFile =
-        "# " + question + "\n\n" + formattedAnswer + "\n\n\n";
-      await sleep(100);
-      try {
-        appendFileSync(`answers/${userPrompt}.md`, answerToPutInFile);
-        process.stdout.clearLine(0);
-        console.log("Answer Updated");
-      } catch (error) {
-        console.error("Error appending data to the file:", error);
-      }
-    }
-    clearInterval(isLoading);
+  } catch (e) {
+    res.send("Please enter valid data").status(422);
   }
-}
+});
 
-run();
+// Start the server
+app.listen(port, () => {
+  console.log(`Express server is running on http://localhost:${port}`);
+});

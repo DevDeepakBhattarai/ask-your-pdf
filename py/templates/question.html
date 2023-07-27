@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Question and Answer</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Ask Question for your pdf</h1>
+      <form method="post" id="questionForm">
+        <div class="mb-3">
+          <label for="question" class="form-label">Enter your question:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="question"
+            name="question"
+            required
+            onkeydown="handleKeyDown()"
+          />
+        </div>
+        <button type="submit" id="submit" class="btn btn-primary">
+          Get Answer
+        </button>
+      </form>
+
+      <!-- Display the loading state and answer -->
+      <div id="loadingSpinner" class="d-none mt-4">
+        <div class="alert alert-primary" role="alert">
+          Loading... Please wait.
+        </div>
+      </div>
+
+      <div id="answerContainer"></div>
+    </div>
+
+    <script>
+      const button = document.getElementById("submit");
+
+      function handleKeyDown(e) {
+        if (e.key === "Enter" && !button.disabled) submitForm(e);
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        const questionForm = document.getElementById("questionForm");
+        const loadingSpinner = document.getElementById("loadingSpinner");
+        const answerContainer = document.getElementById("answerContainer");
+        // Handle form submission
+        function submitForm(event) {
+          event.preventDefault();
+          const question = document.getElementById("question").value;
+          document.getElementById("question").value = "";
+
+          loadingSpinner.classList.remove("d-none");
+          getAnswer(question);
+        }
+        questionForm.onsubmit = submitForm;
+        // Function to fetch the answer using Fetch API
+        function getAnswer(question) {
+          button.disabled = true;
+
+          fetch("http://localhost:5000/question", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ question }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              loadingSpinner.classList.add("d-none");
+              const answer = document.createElement("div");
+              const questionContainer = document.createElement("div");
+
+              answer.classList.add("alert", "alert-success");
+              questionContainer.classList.add(
+                "alert",
+                "alert-success",
+                "mb-2",
+                "mt-4"
+              );
+
+              if (data.error) {
+                answer.innerText = "Error: " + data.error;
+                answerContainer.appendChild(answer);
+                button.disabled = false;
+              } else {
+                questionContainer.innerText = "Question: " + question;
+                answer.innerText = "Answer: " + data.answer;
+                answerContainer.insertBefore(
+                  answer,
+                  answerContainer.firstChild
+                );
+                answerContainer.insertBefore(
+                  questionContainer,
+                  answerContainer.firstChild
+                );
+              }
+              button.disabled = false;
+            })
+            .catch((error) => {
+              console.error("Error getting answer:", error);
+              alert("Error getting answer.");
+              loadingSpinner.classList.add("d-none");
+              button.disabled = false;
+            });
+        }
+      });
+    </script>
+  </body>
+</html>

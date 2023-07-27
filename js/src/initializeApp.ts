@@ -11,7 +11,7 @@ export async function initializeApp() {
   puppeteer.use(extraStealth()).use(captcha());
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.setViewport({ width: 756, height: 1920 });
+  await page.setViewport({ width: 756, height: 2100 });
   const isCookieAvailable = await setCookies(page);
   await page.goto("https://chat.openai.com");
   if (!isCookieAvailable) await Login(page);
@@ -25,7 +25,7 @@ export async function initializeApp() {
   return page;
 }
 
-function observeTheMainMessageContainer() {
+export function observeTheMainMessageContainer() {
   function observe(mutation: MutationRecord[]) {
     if (mutation[1]?.addedNodes?.[0] && mutation.length === 2) {
       const childToObserve =
