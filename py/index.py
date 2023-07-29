@@ -1,12 +1,12 @@
-from flask import Flask, render_template, request, jsonify
-import requests
-from langchain.embeddings import HuggingFaceInstructEmbeddings
-from langchain.vectorstores import Pinecone
-import pinecone
-from dotenv import load_dotenv
 import os
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+import pinecone
+import requests
+from dotenv import load_dotenv
+from langchain.vectorstores import Pinecone
+from flask import Flask, render_template, request
 from langchain.document_loaders import PyPDFLoader
+from langchain.embeddings import HuggingFaceInstructEmbeddings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 load_dotenv()
 
 app = Flask(__name__)
