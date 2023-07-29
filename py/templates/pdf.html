@@ -19,6 +19,7 @@
             type="file"
             class="custom-file-input"
             id="pdfFile"
+            multiple
             accept=".pdf"
             required
           />
@@ -26,6 +27,12 @@
         </div>
         <button type="submit" class="btn btn-primary">Upload PDF</button>
       </form>
+
+      <div class="my-3 d-none" id="fileDisplayerContainer">
+        <strong>Selected Files:</strong>
+        <div id="selectedFiles" class="bg-light p-2 rounded"></div>
+      </div>
+
       <div id="loadingSpinner" class="d-none mt-4">
         <div class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
@@ -42,36 +49,71 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        // Handle form submission
-        $("#uploadForm").submit(function (event) {
+    <script defer>
+      document.getElementById("pdfFile").addEventListener("change", (e) => {
+        console.log(e.target);
+        const files = e.target.files;
+        console.log(files);
+        let filenames = "No files selected";
+        if (files.length > 0) {
+          filenames = "";
+          for (let i = 0; i < files.length; i++) {
+            if (i > 0) filenames += "\n";
+            filenames += files[i].name;
+          }
+        }
+
+        const container = document.getElementById("fileDisplayerContainer");
+        const fileDisplayer = document.getElementById("selectedFiles");
+        container.classList.remove("d-none");
+        fileDisplayer.innerText = filenames;
+      });
+
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", function (event) {
           event.preventDefault();
           const formData = new FormData();
-          formData.append("pdfFile", $("#pdfFile")[0].files[0]);
-          $("#loadingSpinner").removeClass("d-none");
-          $("#successMessage").addClass("d-none");
+          const files = document.getElementById("pdfFile").files;
+          console.log(files);
+          for (let i = 0; i < files.length; i++) {
+            console.log(files[i]);
+            formData.append("pdfFiles", files[i]);
+          }
+
+          document.getElementById("loadingSpinner").classList.remove("d-none");
+          document.getElementById("successMessage").classList.add("d-none");
           uploadPDF(formData);
         });
 
-        // Function to upload the PDF using Fetch API
-        function uploadPDF(formData) {
-          fetch("/upload", {
-            method: "POST",
-            body: formData,
+      // Function to upload the PDF using Fetch API
+      function uploadPDF(formData) {
+        fetch("/upload", {
+          method: "POST",
+          body: formData,
+        })
+          .then(function (response) {
+            return response.json();
           })
-            .then((response) => response.json())
-            .then((data) => {
-              $("#loadingSpinner").addClass("d-none");
-              $("#successMessage").removeClass("d-none");
-            })
-            .catch((error) => {
-              console.error("Error uploading PDF:", error);
-              alert("Error uploading PDF.");
-              $("#loadingSpinner").addClass("d-none");
-            });
-        }
-      });
+          .then(function (data) {
+            document.getElementById("loadingSpinner").classList.add("d-none");
+            document
+              .getElementById("successMessage")
+              .classList.remove("d-none");
+
+            const link = document.createElement("a");
+            link.classList.add("btn", "btn-primary");
+            link.innerText = "Go to question page";
+            link.href = "/question";
+
+            document.querySelector(".container.mt-5").appendChild(link);
+          })
+          .catch(function (error) {
+            console.error("Error uploading PDF:", error);
+            alert("Error uploading PDF.");
+            document.getElementById("loadingSpinner").classList.add("d-none");
+          });
+      }
     </script>
   </body>
 </html>

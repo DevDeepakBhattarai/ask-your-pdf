@@ -14,7 +14,9 @@ app = Flask(__name__)
 KEY = os.getenv("PINECONE_API_KEY")
 ENVIRONMENT = os.getenv("PINECONE_ENVIRONMENT")
 BASE_URL = "G:\Coding\chatgpt-pdf-reader\py\inputs\\"
-
+pinecone_index = "pdf-search"
+DIMENSION = 768
+METRIC = "cosine"
 pinecone.init(
     api_key=KEY,
     environment=ENVIRONMENT)
@@ -22,9 +24,6 @@ pinecone.init(
 
 instructor_embedding = HuggingFaceInstructEmbeddings(
     model_name="hkunlp/instructor-base")
-
-db = Pinecone(index=pinecone.Index('pdf-search'),
-              embedding_function=instructor_embedding.embed_query, text_key="text")
 
 
 @app.route('/')
@@ -43,6 +42,9 @@ def question():
 
 
 def process_question(question):
+
+    db = Pinecone(index=pinecone.Index(pinecone_index),
+                  embedding_function=instructor_embedding.embed_query, text_key="text")
 
     # Perform similarity search and get the context
     answer = db.similarity_search(question)
@@ -64,34 +66,38 @@ def process_question(question):
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    if 'pdfFile' not in request.files:
+    if (pinecone_index not in pinecone.list_indexes()):
+        pinecone.create_index(
+            pinecone_index, dimension=DIMENSION, metric=METRIC)
+    else:
+        index = pinecone.Index(pinecone_index)
+        index.delete(delete_all=True)
+
+    if 'pdfFiles' not in request.files:
         return {"error": "No file part"}
 
-    file = request.files['pdfFile']
-    print(file)
+    files = request.files.getlist('pdfFiles')  # Get the list of uploaded files
+    print(files)
+    for file in files:
+        if file.filename == '':
+            continue
 
-    if file.filename == '':
-        return {"error": "No selected file"}
+        file_path = os.path.join(BASE_URL, file.filename)
+        file.save(file_path)
 
-    file_path = os.path.join(BASE_URL, file.filename)
-    file.save(file_path)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500,
+                                                       chunk_overlap=20)
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500,
-                                                   chunk_overlap=20)
+        loader = PyPDFLoader(file_path)
+        pages = loader.load_and_split(text_splitter=text_splitter)
 
-    loader = PyPDFLoader(file_path)
-    pages = loader.load_and_split(text_splitter=text_splitter)
+        print(f"There are {len(pages)} docs")
 
-    print(f"There are {len(pages)} docs")
+        Pinecone.from_documents(pages, instructor_embedding,
+                                index_name=pinecone_index)
 
-    Pinecone.from_documents(pages, instructor_embedding,
-                            index_name="pdf-search")
-
-    # Your existing code for processing the PDF file here...
-    # (Make sure to update the file_path accordingly)
-
-    return {"message": "PDF uploaded successfully!"}
+    return {"message": "PDFs uploaded successfully!"}
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run()
