@@ -1,5 +1,18 @@
 # Chat with your PDF file
 
+## Clone the repo
+
+**Note**:
+
+1. If you do not have `git` in your pc. Install `git`
+1. You will need `Node js` and `python` installed in your to use this app
+
+#### Run the command below in `powershell` or `bash` in the directory you want this app in.
+
+```
+git clone https://github.com/DevDeepakBhattarai/ask-your-pdf.git
+```
+
 ### **Updating Environment Variables for the Express and Flask Apps**
 
 Thank you for using our Express and Flask apps! Before you get started, please follow the instructions below to set up the necessary environment variables for both apps.
