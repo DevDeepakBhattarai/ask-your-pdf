@@ -9,7 +9,7 @@ import { Login } from "./login";
 
 export async function initializeApp() {
   puppeteer.use(extraStealth()).use(captcha());
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.setViewport({ width: 756, height: 2100 });
   const isCookieAvailable = await setCookies(page);
