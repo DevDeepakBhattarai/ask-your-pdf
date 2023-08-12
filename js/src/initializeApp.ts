@@ -9,9 +9,8 @@ import { Login } from "./login";
 
 export async function initializeApp() {
   puppeteer.use(extraStealth()).use(captcha());
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.setViewport({ width: 756, height: 2100 });
   const isCookieAvailable = await setCookies(page);
   await page.goto("https://chat.openai.com");
   if (!isCookieAvailable) await Login(page);
@@ -22,6 +21,7 @@ export async function initializeApp() {
   }
   await closeRadixModal(page);
   await page.evaluate(observeTheMainMessageContainer);
+  await page.setViewport({ width: 756, height: 2100 });
   return page;
 }
 
@@ -30,7 +30,6 @@ export function observeTheMainMessageContainer() {
     if (mutation[1]?.addedNodes?.[0] && mutation.length === 2) {
       const childToObserve =
         mutation[1].addedNodes[0].firstChild?.lastChild?.firstChild?.firstChild;
-
       const wrapperObserver = new MutationObserver((mutation) => {
         if (mutation[0].type === "attributes") {
           console.log((mutation[0].target as HTMLDivElement).innerText);
