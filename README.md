@@ -54,6 +54,6 @@ With these environment variables set up in both apps, you are now ready to run t
 
 ## Running the Apps:
 
-1. Run the `jsInstall.bat` to install Javascript dependencies and `pythonInstall.bat` to install Python dependencies. These files are provided
+1. Run the `install.bat` file which is provided to install the required dependencies.
 2. Once both the installation are completed run the `run.bat`
 3. Once both the apps are running navigate to `http://localhost:5000` to use the app
