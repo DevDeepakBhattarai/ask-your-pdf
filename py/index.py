@@ -23,7 +23,7 @@ pinecone.init(
 
 
 instructor_embedding = HuggingFaceInstructEmbeddings(
-    model_name="hkunlp/instructor-base")
+    model_name="intfloat/e5-base-v2")
 
 
 @app.route('/')

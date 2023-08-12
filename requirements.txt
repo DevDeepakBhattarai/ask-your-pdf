@@ -1,8 +1,0 @@
-langchain
-pinecone-client
-pypdf
-python-dotenv
-Flask
-sentence_transformers
-InstructorEmbedding
-torch
