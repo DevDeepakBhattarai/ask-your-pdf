@@ -21,6 +21,7 @@ let page: Page | undefined;
 
 app.post("/answer", async (req, res) => {
   const data = req.body;
+  console.log();
   try {
     const { prompt: userPrompt, system, context } = inputSchema.parse(data);
 

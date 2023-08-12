@@ -21,7 +21,6 @@ export async function initializeApp() {
   }
   await closeRadixModal(page);
   await page.evaluate(observeTheMainMessageContainer);
-  await page.setViewport({ width: 756, height: 2100 });
   return page;
 }
 
