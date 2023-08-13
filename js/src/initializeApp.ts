@@ -9,7 +9,7 @@ import { Login } from "./login";
 
 export async function initializeApp() {
   puppeteer.use(extraStealth()).use(captcha());
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
   const isCookieAvailable = await setCookies(page);
   await page.goto("https://chat.openai.com");
