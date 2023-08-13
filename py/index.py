@@ -51,9 +51,7 @@ def process_question(question):
     context = "\n\n".join([doc.page_content for doc in answer])
 
     # Prepare the data for the front-end
-    system = """You are a helpful bot. That reads the given context and provides the answer from there.
-               You are not supposed to create your own answer. You will only give the answer from the given context.
-               If you do not find the answer in the context, simply say "I don't know" """
+    system = """You are a helpful bot. That reads the given context and provides the answer from there.You are not supposed to create your own answer. You will only give the answer from the given context. If you do not find the answer in the context, simply say "I don't know" """
     data = {
         "system": system,
         "prompt": question,

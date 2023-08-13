@@ -21,10 +21,8 @@ let page: Page | undefined;
 
 app.post("/answer", async (req, res) => {
   const data = req.body;
-  console.log();
   try {
-    const { prompt: userPrompt, system, context } = inputSchema.parse(data);
-
+    const { prompt, system, context } = inputSchema.parse(data);
     if (!page) {
       page = await initializeApp(); // Assuming initializeApp is defined in your GPT module
     }
@@ -34,7 +32,7 @@ app.post("/answer", async (req, res) => {
 
     try {
       const replacements = {
-        question: userPrompt,
+        question: prompt,
         system: system,
         context: context,
       };
@@ -50,7 +48,7 @@ app.post("/answer", async (req, res) => {
         .json({ error: "An error occurred while generating the answer." });
     }
   } catch (e) {
-    res.send("Please enter valid data").status(422);
+    res.send("Please enter valid data ").status(422);
   }
 });
 

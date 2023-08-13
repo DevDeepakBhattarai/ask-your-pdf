@@ -2,9 +2,7 @@ import { Page } from "puppeteer";
 import { sleep } from "../utils/sleep";
 
 export async function askGPT(page: Page, prompt: string) {
-  const clipboard = (await import("clipboardy")).default;
-  await clipboard.write(prompt);
-  await page.focus("textarea");
+  await page.type("textarea", prompt);
   await page.keyboard.down("ControlLeft");
   await page.keyboard.press("v");
   await page.keyboard.up("ControlLeft");
