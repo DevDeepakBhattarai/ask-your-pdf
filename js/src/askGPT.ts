@@ -1,8 +1,18 @@
 import { Page } from "puppeteer";
 import { sleep } from "../utils/sleep";
-
 export async function askGPT(page: Page, prompt: string) {
-  await page.type("textarea", prompt);
+  await page.evaluate((prompt: string) => {
+    console.log("I ran");
+    window.navigator.clipboard
+      .writeText(prompt)
+      .then(() => {
+        console.log("Copied");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, sanitizeStringForClipboard(prompt));
+  await page.focus("textarea");
   await page.keyboard.down("ControlLeft");
   await page.keyboard.press("v");
   await page.keyboard.up("ControlLeft");
@@ -22,4 +32,13 @@ export async function askGPT(page: Page, prompt: string) {
   });
 
   return finalAnswer!;
+}
+function sanitizeStringForClipboard(input: string): string {
+  // Define a regular expression that matches non-printable ASCII characters excluding new lines
+  const forbiddenChars = /[^\x20-\x7E\r\n]/g;
+
+  // Remove or replace forbidden characters
+  const sanitizedString = input.replace(forbiddenChars, "");
+
+  return sanitizedString;
 }

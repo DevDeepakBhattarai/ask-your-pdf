@@ -23,7 +23,7 @@ pinecone.init(
 
 
 instructor_embedding = HuggingFaceInstructEmbeddings(
-    model_name="intfloat/e5-base-v2")
+    model_name="BAAI/bge-base-en")
 
 
 @app.route('/')

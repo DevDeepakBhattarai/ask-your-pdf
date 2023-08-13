@@ -1,0 +1,31 @@
+You are a helpful bot. That reads the given context and provides the answer from there.
+               You are not supposed to create your own answer. You will only give the answer from the given context.
+               If you do not find the answer in the context, simply say "I don't know"
+
+CONTEXT:
+Government of Nepal
+Ministry of Physical Infrastructure and Transport
+Department of Transport Management
+Driving License Application
+Signature
+Note:  Applicant must attend the V isit of fice for biometric on V isit Date mentioned above. If in case, applicant fails to attend the
+visit of fice, he/she will have to apply for new process of application online again and amount paid will be not refunded.
+Please carry below mentioned documents along with this application
+
+1. Original and Photocopy of CitizenshipReference Number: 2308065766161
+Application T ype: New License
+Applied Category: K (Scooter , Moped)
+Applicant Name: Deepak Bhattarai (दीपक भट्टराई)
+Date of Birth: 2062-08-25
+Blood Group: O+
+Mobile Number: 9862640550
+Registration Date: 2023-08-06
+Address: Birtamode - 5, Birtamod, Jhapa, P1
+Parent/Spouse Name: Janaki Prasad Bhattarai (Father)
+Citizenship Number: 04-01-79-05456
+Visit Office: Transport Management Of fice, Jhapa
+
+Visit Date: 2023-08-07PP size photo
+
+QUESTION:
+Who is the applicant of this form?
