@@ -97,5 +97,16 @@ def upload():
     return {"message": "PDFs uploaded successfully!"}
 
 
+@app.route('/new')
+def send_request():
+    url = 'http://localhost:3000/new'
+
+    try:
+        response = requests.get(url)
+        return f'Success! Status code: {response.status_code}'
+    except requests.exceptions.RequestException as e:
+        return f'Error: {e}'
+
+
 if __name__ == "__main__":
     app.run()

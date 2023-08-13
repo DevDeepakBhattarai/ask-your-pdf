@@ -9,7 +9,12 @@
   </head>
   <body>
     <div class="container">
-      <h1>Ask Question from your pdf</h1>
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>Ask Question from your pdf</h1>
+        <button class="btn btn-primary" role="button" onclick="refresh()">
+          New Page+
+        </button>
+      </div>
       <form method="post" id="questionForm">
         <div class="mb-3">
           <label for="question" class="form-label">Enter your question:</label>
@@ -39,11 +44,15 @@
 
     <script>
       const button = document.getElementById("submit");
-
+      function refresh() {
+        location.reload();
+      }
       function handleKeyDown(e) {
         if (e.key === "Enter" && !button.disabled) submitForm(e);
       }
       document.addEventListener("DOMContentLoaded", function () {
+        fetch("http://localhost:3000/new", { method: "GET" });
+
         const questionForm = document.getElementById("questionForm");
         const loadingSpinner = document.getElementById("loadingSpinner");
         const answerContainer = document.getElementById("answerContainer");

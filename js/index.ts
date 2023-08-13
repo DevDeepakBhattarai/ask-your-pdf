@@ -7,8 +7,7 @@ import express from "express";
 import { Page } from "puppeteer";
 import { newGPTPage } from "./src/newGPTPage";
 import { z } from "zod";
-import { sys } from "typescript";
-
+import cors from "cors";
 const inputSchema = z.object({
   system: z.string(),
   prompt: z.string(),
@@ -17,6 +16,7 @@ const inputSchema = z.object({
 const app = express();
 const port = 3000;
 app.use(express.json());
+app.use(cors({ origin: "*" }));
 let page: Page | undefined;
 
 app.post("/answer", async (req, res) => {
@@ -25,9 +25,6 @@ app.post("/answer", async (req, res) => {
     const { prompt, system, context } = inputSchema.parse(data);
     if (!page) {
       page = await initializeApp(); // Assuming initializeApp is defined in your GPT module
-    }
-    if (page) {
-      await newGPTPage(page);
     }
 
     try {
@@ -50,6 +47,14 @@ app.post("/answer", async (req, res) => {
   } catch (e) {
     res.send("Please enter valid data ").status(422);
   }
+});
+
+app.get("/new", async (req, res) => {
+  console.log("Hello");
+  if (page) {
+    await newGPTPage(page);
+  }
+  res.send("Done");
 });
 
 // Start the server
